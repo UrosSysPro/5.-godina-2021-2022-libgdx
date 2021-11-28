@@ -23,9 +23,9 @@ public class BoidSimulation {
         for(int i=0;i<list.size();i++){
             pomocnaLista.get(i).update(list);
         }
-        Object p=pomocnaLista;
-        pomocnaLista=list;
-        list=(ArrayList<Boid>) p;
+        ArrayList<Boid> p = pomocnaLista;
+        pomocnaLista = list;
+        list = p;
     }
     public void add(float x,float y,float vx,float vy){
         list.add(new Boid(x,y,vx,vy));

@@ -20,7 +20,7 @@ public class Main extends ApplicationAdapter {
         w=Gdx.graphics.getWidth();
         h=Gdx.graphics.getHeight();
         Random random=new Random();
-        for(int i=0;i<10;i++){
+        for(int i=0;i<100;i++){
             float x=random.nextInt(w);
             float y=random.nextInt(h);
             double r=random.nextFloat()*Math.PI*2;
