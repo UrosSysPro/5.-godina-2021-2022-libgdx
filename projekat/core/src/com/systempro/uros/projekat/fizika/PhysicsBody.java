@@ -10,13 +10,14 @@ public class PhysicsBody {
     public float w,h;
     public static float scale=20;
 
-    public PhysicsBody(World world, float x,float y,float w,float h){
+    public PhysicsBody(World world, float x,float y,float w,float h,float a){
         this.w=w;
         this.h=h;
 
         BodyDef bodyDef=new BodyDef();
         bodyDef.position.x= x/scale;
         bodyDef.position.y= y/scale;
+        bodyDef.angle=a;
         bodyDef.type= BodyDef.BodyType.DynamicBody;
 
         FixtureDef fixtureDef=new FixtureDef();
@@ -41,4 +42,16 @@ public class PhysicsBody {
         renderer.rect(x-w,y-h,w,h,2*w,2*h,1,1,a);
         renderer.end();
     }
+
+    public PhysicsBody(World world, float x,float y,float w,float h){
+        this(world,x,y,w,h,0);
+    }
+
+    public float getX(){
+        return body.getPosition().x*scale;
+    }
+    public float getY(){
+        return body.getPosition().y*scale;
+    }
+
 }
