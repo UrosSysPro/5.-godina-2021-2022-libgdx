@@ -9,6 +9,7 @@ public class Player extends PhysicsBody {
 
     public Color color;
     public boolean keyUp,keyDown,keyLeft,keyRight;
+    public boolean isStanding;
     public static float acceleration=1f;
     public static float maxSpeed=4;
 
@@ -21,6 +22,7 @@ public class Player extends PhysicsBody {
         keyDown=false;
         keyLeft=false;
         keyRight=false;
+        isStanding=true;
     }
 
     public void update(){
@@ -33,7 +35,7 @@ public class Player extends PhysicsBody {
             v.x+=acceleration;
             if(v.x>maxSpeed)v.x=maxSpeed;
         }
-        if(keyUp){
+        if(keyUp&&isStanding){
             v.y=7;
         }
 

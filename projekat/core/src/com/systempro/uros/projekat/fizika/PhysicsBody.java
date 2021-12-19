@@ -2,7 +2,9 @@ package com.systempro.uros.projekat.fizika;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 
 public class PhysicsBody {
     public Body body;
@@ -31,6 +33,8 @@ public class PhysicsBody {
 
         body=world.createBody(bodyDef);
         fixture=body.createFixture(fixtureDef);
+        body.setUserData(this);
+        fixture.setUserData(this);
     }
     public void draw(ShapeRenderer renderer){
         float x=body.getPosition().x*scale;
@@ -53,5 +57,17 @@ public class PhysicsBody {
     public float getY(){
         return body.getPosition().y*scale;
     }
+    public static void cbox2donnect(PhysicsBody a,PhysicsBody b){
+        RevoluteJointDef def=new RevoluteJointDef();
+        def.bodyA=a.body;
+        def.bodyB=b.body;
+        def.localAnchorA.x=a.w;
+        def.localAnchorA.y=0;
 
+        def.localAnchorB.x=-b.w;
+        def.localAnchorB.y=0;
+
+        World w=a.body.getWorld();
+        w.createJoint(def);
+    }
 }
