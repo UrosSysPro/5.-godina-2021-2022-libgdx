@@ -1,9 +1,5 @@
 ./.gradle/*
 ./desktop/build/*
 ./core/build/*
-.gradle
-./.gradle
-.gradle/*
-gradle
-./.gradle
+/.gradle/
 /.gradle/
