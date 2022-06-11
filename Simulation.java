@@ -5,6 +5,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 public class Simulation {
 
     float[][] u,v,dens,u_prev,v_prev,dens_prev;
+    float[][] dens_r,dens_g,dens_b;
+    float dens_diff=0f;
+    float vel_diff=0.01f;
 
     public int width,height,cellSize;
 
@@ -15,6 +18,9 @@ public class Simulation {
         u=new float[width][height];
         v=new float[width][height];
         dens=new float[width][height];
+        dens_r=new float[width][height];
+        dens_g=new float[width][height];
+        dens_b=new float[width][height];
         u_prev=new float[width][height];
         v_prev=new float[width][height];
         dens_prev=new float[width][height];
@@ -25,6 +31,9 @@ public class Simulation {
                 u[i][j]=0;
                 v[i][j]=0;
                 dens[i][j]=0;
+                dens_r[i][j]=0;
+                dens_g[i][j]=0;
+                dens_b[i][j]=0;
                 u_prev[i][j]=0;
                 v_prev[i][j]=0;
                 dens_prev[i][j]=0;
@@ -32,29 +41,48 @@ public class Simulation {
     }
     public void update(float delta){
 
-        update_dens(delta);
         update_velocity(delta);
+        update_dens(delta);
     }
     public void update_dens(float delta){
-        difuse(dens_prev,dens,0.01f,delta);
-        float[][] niz=dens;
-        dens=dens_prev;
+        float[][] niz=dens_r;
+        dens_r=dens_prev;
         dens_prev=niz;
-        advect(dens_prev,dens,u,v,delta);
-        niz=dens;
-        dens=dens_prev;
+        difuse(dens_r,dens_prev,dens_diff,delta);
+        niz=dens_r;
+        dens_r=dens_prev;
         dens_prev=niz;
+        advect(dens_r,dens_prev,u,v,delta);
+
+        niz=dens_g;
+        dens_g=dens_prev;
+        dens_prev=niz;
+        difuse(dens_g,dens_prev,dens_diff,delta);
+        niz=dens_g;
+        dens_g=dens_prev;
+        dens_prev=niz;
+        advect(dens_g,dens_prev,u,v,delta);
+
+        niz=dens_b;
+        dens_b=dens_prev;
+        dens_prev=niz;
+        difuse(dens_b,dens_prev,dens_diff,delta);
+        niz=dens_b;
+        dens_b=dens_prev;
+        dens_prev=niz;
+        advect(dens_b,dens_prev,u,v,delta);
     }
+
     public void update_velocity(float delta){
         float[][] p;
         p=u;
         u=u_prev;
         u_prev=p;
-        difuse (  u, u_prev,0.01f,delta);
+        difuse (  u, u_prev,vel_diff,delta);
         p=v;
         v=v_prev;
         v_prev=p;
-        difuse (  v, v_prev, 0.01f, delta);
+        difuse (  v, v_prev, vel_diff, delta);
         project (  u, v, u_prev,v_prev );
         p=u;
         u=u_prev;
@@ -107,6 +135,7 @@ public class Simulation {
             }
         }
     }
+
     void project (float[][] u, float[][] v, float[][] p, float[][] div )
     {
         int i, j, k;
@@ -137,6 +166,7 @@ public class Simulation {
         }
         set_bnd ( 1, u ); set_bnd (  2, v );
     }
+
     void set_bnd ( int b, float [][] x )
     {
 
@@ -144,11 +174,11 @@ public class Simulation {
 
             x[i][0]=b==2?(-x[i][1]):x[i][1];
 
-            x[i][height-2]=b==2?(- x[i][height-1]):x[i][height-1];
+            x[i][height-1]=b==2?(- x[i][height-2]):x[i][height-2];
         }
         for(int j=1;j<=height-2;j++){
             x[0 ][j] = b==1 ? -x[1][j] : x[1][j];
-            x[width-2][j] = b==1 ? -x[width-1][j] : x[width-1][j];
+            x[width-1][j] = b==1 ? -x[width-2][j] : x[width-2][j];
         }
 //        x[0][0] = 0.5*(x[IX(1,0 )]+x[IX(0 ,1)]);
 //        x[0][height-1] = 0.5*(x[IX(1,N+1)]+x[IX(0 ,N )]);
@@ -160,8 +190,10 @@ public class Simulation {
         renderer.begin(ShapeRenderer.ShapeType.Filled);
         for(int i=0;i<width;i++)
             for(int j=0;j<height;j++){
-                float d=1-dens[i][j];
-                renderer.setColor(d,d,d,1);
+                float r=dens_r[i][j];
+                float g=dens_g[i][j];
+                float b=dens_b[i][j];
+                renderer.setColor(r,g,b,1);
                 float x=i*cellSize;
                 float y=(height-1-j)*cellSize;
                 renderer.rect(x,y,cellSize,cellSize);
